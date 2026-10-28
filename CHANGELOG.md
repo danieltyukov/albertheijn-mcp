@@ -14,6 +14,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - The API sometimes refuses a saved anonymous token with HTTP 400 before it expires. The client now gets a new token and tries once more.
 - With `AH_MCP_DEBUG=1`, a failed API call logs the start of the response body, with tokens redacted.
 
+### Security
+
+- The install scripts now install the GitHub release directly. They used to try the npm registry name first, which nobody has published yet, so a package someone else put under that name would have been installed instead.
+
 ## [0.1.0] - 2026-10-28
 
 ### Added

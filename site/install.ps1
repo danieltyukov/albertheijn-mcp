@@ -61,27 +61,18 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
   Fail 'npm was not found next to node. Reinstall Node.js from https://nodejs.org'
 }
 
-$package = 'albertheijn-mcp'
-$fallback = 'https://github.com/danieltyukov/albertheijn-mcp/releases/latest/download/albertheijn-mcp.tgz'
+# Install the GitHub release, not the npm registry name: nobody has published
+# albertheijn-mcp to npm yet, so a package under that name could be anyone's.
+$tarball = 'https://github.com/danieltyukov/albertheijn-mcp/releases/latest/download/albertheijn-mcp.tgz'
 if ($env:AH_MCP_VERSION) {
-  $package = "albertheijn-mcp@$($env:AH_MCP_VERSION)"
-  $fallback = "https://github.com/danieltyukov/albertheijn-mcp/releases/download/v$($env:AH_MCP_VERSION)/albertheijn-mcp.tgz"
+  $tarball = "https://github.com/danieltyukov/albertheijn-mcp/releases/download/v$($env:AH_MCP_VERSION)/albertheijn-mcp.tgz"
 }
 
-Write-Host "Installing $package with npm. This can take a minute."
-$output = Invoke-Native 'npm' @('install', '-g', $package)
+Write-Host 'Installing albertheijn-mcp with npm. This can take a minute.'
+$output = Invoke-Native 'npm' @('install', '-g', $tarball)
 if ($LASTEXITCODE -ne 0) {
-  if ($output -match 'E404|404 Not Found') {
-    Write-Host 'The package is not on the npm registry yet. Installing the GitHub release instead.'
-    $output = Invoke-Native 'npm' @('install', '-g', $fallback)
-    if ($LASTEXITCODE -ne 0) {
-      Write-Host $output
-      Fail "Installing from $fallback failed."
-    }
-  } else {
-    Write-Host $output
-    Fail 'npm install failed.'
-  }
+  Write-Host $output
+  Fail "Installing from $tarball failed."
 }
 
 $bin = Get-Command albertheijn-mcp -ErrorAction SilentlyContinue

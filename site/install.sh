@@ -72,32 +72,22 @@ if [ "$MAJOR" -lt 20 ]; then
 fi
 command -v npm >/dev/null 2>&1 || fail "npm was not found next to node. Reinstall Node.js from https://nodejs.org"
 
-PKG="albertheijn-mcp"
-FALLBACK="https://github.com/danieltyukov/albertheijn-mcp/releases/latest/download/albertheijn-mcp.tgz"
+# Install the GitHub release, not the npm registry name: nobody has published
+# albertheijn-mcp to npm yet, so a package under that name could be anyone's.
+TARBALL="https://github.com/danieltyukov/albertheijn-mcp/releases/latest/download/albertheijn-mcp.tgz"
 if [ -n "${AH_MCP_VERSION:-}" ]; then
-  PKG="albertheijn-mcp@${AH_MCP_VERSION}"
-  FALLBACK="https://github.com/danieltyukov/albertheijn-mcp/releases/download/v${AH_MCP_VERSION}/albertheijn-mcp.tgz"
+  TARBALL="https://github.com/danieltyukov/albertheijn-mcp/releases/download/v${AH_MCP_VERSION}/albertheijn-mcp.tgz"
 fi
 
-say "Installing $PKG with npm. This can take a minute."
-if OUTPUT=$(npm install -g "$PKG" 2>&1); then
-  :
-else
+say "Installing albertheijn-mcp ${AH_MCP_VERSION:-(latest release)} with npm. This can take a minute."
+if ! OUTPUT=$(npm install -g "$TARBALL" 2>&1); then
+  printf '%s\n' "$OUTPUT" >&2
   case "$OUTPUT" in
-    *E404*|*"404 Not Found"*)
-      say "The package is not on the npm registry yet. Installing the GitHub release instead."
-      if ! OUTPUT=$(npm install -g "$FALLBACK" 2>&1); then
-        printf '%s\n' "$OUTPUT" >&2
-        fail "Installing from $FALLBACK failed."
-      fi
-      ;;
     *EACCES*|*"permission denied"*)
-      printf '%s\n' "$OUTPUT" >&2
       fail "npm is not allowed to write to its global directory. See https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally"
       ;;
     *)
-      printf '%s\n' "$OUTPUT" >&2
-      fail "npm install failed."
+      fail "Installing from $TARBALL failed."
       ;;
   esac
 fi
