@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-28
+
+### Fixed
+
+- Sign-in: when Albert Heijn's bot protection refuses the login window, `login` now stops at once with `LOGIN_BLOCKED` and points to `login --manual`, instead of waiting until the timeout.
+- The API sometimes refuses a saved anonymous token with HTTP 400 before it expires. The client now gets a new token and tries once more.
+- With `AH_MCP_DEBUG=1`, a failed API call logs the start of the response body, with tokens redacted.
+
 ## [0.1.0] - 2026-10-28
 
 ### Added
@@ -19,5 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Browser sign-in that captures the app login code, a manual fallback, automatic token renewal, and `setup` for Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Zed, Codex, Gemini CLI and Cline.
 - Unit, end-to-end (stdio) and live tests; a weekly live check of the anonymous API.
 
-[Unreleased]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/danieltyukov/albertheijn-mcp/releases/tag/v0.1.0
