@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="albertheijn-mcp">
+  <rect width="64" height="64" rx="10" fill="#1F7A4D"/>
+  <path d="M21 27 C21 14.5 43 14.5 43 27" fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+  <rect x="10" y="25" width="44" height="8" rx="2" fill="#FFFFFF"/>
+  <path d="M13.5 35 H50.5 L46.5 53 Q46 55 44 55 H20 Q18 55 17.5 53 Z" fill="#FFFFFF"/>
+  <g stroke="#1F7A4D" stroke-width="3" stroke-linecap="round">
+    <line x1="24.5" y1="39.5" x2="25.5" y2="50.5"/>
+    <line x1="32" y1="39.5" x2="32" y2="50.5"/>
+    <line x1="39.5" y1="39.5" x2="38.5" y2="50.5"/>
+  </g>
+  <circle cx="49.5" cy="13.5" r="5" fill="#F4B740"/>
+</svg>

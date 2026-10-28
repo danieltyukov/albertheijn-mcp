@@ -1,0 +1,401 @@
+{
+  "productId": 33693,
+  "productCard": {
+    "webshopId": 33693,
+    "hqId": 92154,
+    "title": "AH Halfvolle melk",
+    "brand": "AH",
+    "salesUnitSize": "1,5 l",
+    "unitPriceDescription": "prijs per liter €1.19",
+    "priceBeforeBonus": 1.79,
+    "isBonus": false,
+    "discountLabels": [],
+    "mainCategory": "Zuivel, eieren",
+    "subCategory": "Halfvolle melk",
+    "images": [
+      {
+        "width": 200,
+        "height": 200,
+        "url": "https://static.ah.nl/dam/product/AHI_6450356b7238614d537371596c645f596a686e315a67?revLabel=1&rendition=200x200_WEBP&fileType=binary"
+      }
+    ],
+    "availableOnline": true,
+    "isOrderable": true,
+    "orderAvailabilityStatus": "IN_ASSORTMENT",
+    "isVirtualBundle": false,
+    "descriptionHighlights": "<p>Een koud glas halfvolle melk.</p>"
+  },
+  "properties": {
+    "nutriscore": ["B"],
+    "sp_exclude_dieet_veganistisch": ["Veganistisch"],
+    "sp_include_dieet_vegetarisch": ["Vegetarisch"],
+    "sp_include_intolerance_geen_gluten": ["Geen gluten"],
+    "sp_exclude_intolerance_geen_lactose": ["Geen lactose"]
+  },
+  "tradeItem": {
+    "gtin": "08710400058519",
+    "foodAndBeverageIngredientStatement": "Ingrediënten: halfvolle melk*.\nWaarvan toegevoegde suikers 0.00g per 100 milliliter en waarvan toegevoegd zout 0.00g per 100 milliliter\n*Van weidemelk.",
+    "allergenInformation": [
+      {
+        "items": [
+          {
+            "typeCode": {
+              "value": "AC",
+              "label": "Schaaldieren"
+            },
+            "levelOfContainmentCode": {
+              "value": "FREE_FROM",
+              "label": "Vrij van"
+            }
+          },
+          {
+            "typeCode": {
+              "value": "AE",
+              "label": "Eieren"
+            },
+            "levelOfContainmentCode": {
+              "value": "FREE_FROM",
+              "label": "Vrij van"
+            }
+          },
+          {
+            "typeCode": {
+              "value": "AF",
+              "label": "Vis"
+            },
+            "levelOfContainmentCode": {
+              "value": "FREE_FROM",
+              "label": "Vrij van"
+            }
+          },
+          {
+            "typeCode": {
+              "value": "AM",
+              "label": "Melk"
+            },
+            "levelOfContainmentCode": {
+              "value": "CONTAINS",
+              "label": "Bevat"
+            }
+          }
+        ],
+        "statement": "melk"
+      }
+    ],
+    "nutritionalInformation": {
+      "nutrientHeaders": [
+        {
+          "dailyValueIntakeReference": [
+            "Referentie-inname van een gemiddelde volwassene is 8400 kJ / 2000 kcal"
+          ],
+          "nutrientBasisQuantity": {
+            "value": 100.0,
+            "measurementUnitCode": {
+              "value": "ml",
+              "label": "Milliliter"
+            }
+          },
+          "nutrientBasisQuantityDescription": ["200 milliliter"],
+          "nutrientDetail": [
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "ENER-",
+                "label": "Energie"
+              },
+              "quantityContained": [
+                {
+                  "value": 200.0,
+                  "measurementUnitCode": {
+                    "value": "kJ",
+                    "label": "Kilojoule"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "ENER-",
+                "label": "Energie"
+              },
+              "quantityContained": [
+                {
+                  "value": 48.0,
+                  "measurementUnitCode": {
+                    "value": "kcal",
+                    "label": "Kilocalorie"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "FAT",
+                "label": "Vet"
+              },
+              "quantityContained": [
+                {
+                  "value": 1.6,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "FASAT",
+                "label": "waarvan verzadigd"
+              },
+              "quantityContained": [
+                {
+                  "value": 1.1,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "X_FUNS",
+                "label": "waarvan onverzadigd"
+              },
+              "quantityContained": [
+                {
+                  "value": 0.5,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "CHOAVL",
+                "label": "Koolhydraten"
+              },
+              "quantityContained": [
+                {
+                  "value": 4.7,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "SUGAR-",
+                "label": "waarvan suikers"
+              },
+              "quantityContained": [
+                {
+                  "value": 4.7,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "FIBTG",
+                "label": "Voedingsvezel"
+              },
+              "quantityContained": [
+                {
+                  "value": 0.0,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "PRO-",
+                "label": "Eiwitten"
+              },
+              "quantityContained": [
+                {
+                  "value": 3.6,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "SALTEQ",
+                "label": "Zout"
+              },
+              "quantityContained": [
+                {
+                  "value": 0.13,
+                  "measurementUnitCode": {
+                    "value": "g",
+                    "label": "Gram"
+                  }
+                }
+              ]
+            },
+            {
+              "dailyValueIntakePercent": 12.0,
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "RIBF",
+                "label": "Vitamine B2 / Riboflavine"
+              },
+              "quantityContained": [
+                {
+                  "value": 0.18,
+                  "measurementUnitCode": {
+                    "value": "mg",
+                    "label": "Milligram"
+                  }
+                }
+              ]
+            },
+            {
+              "dailyValueIntakePercent": 18.0,
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "VITB12",
+                "label": "Vitamine B12 / Cyano-Cobalamine"
+              },
+              "quantityContained": [
+                {
+                  "value": 0.47,
+                  "measurementUnitCode": {
+                    "value": "µg",
+                    "label": "Microgram"
+                  }
+                }
+              ]
+            },
+            {
+              "dailyValueIntakePercent": 15.0,
+              "measurementPrecisionCode": {
+                "value": "APPROXIMATELY",
+                "label": "Ongeveer"
+              },
+              "nutrientSource": [],
+              "nutrientTypeCode": {
+                "value": "CA",
+                "label": "Calcium"
+              },
+              "quantityContained": [
+                {
+                  "value": 126.0,
+                  "measurementUnitCode": {
+                    "value": "mg",
+                    "label": "Milligram"
+                  }
+                }
+              ]
+            }
+          ],
+          "preparationStateCode": {
+            "value": "UNPREPARED",
+            "label": "Onbereide"
+          }
+        }
+      ],
+      "nutritionalClaim": [
+        "Beter Voor Natuur & Boer\nDit product is afkomstig van boeren en telers die bovenwettelijke inspanningen leveren op biodiversiteit, klimaat en dierenwelzijn. Voor hun inspanningen ontvangen zij een premie. De naleving van dit onafhankelijke keurmerk wordt jaarlijks gecontroleerd. Meer informatie: betervoornatuurenboer.nl ",
+        "Deze Albert Heijn zuivel is voor 100% afkomstig van koeien die minimaal 120 dagen per jaar, 6 uur per dag in de wei lopen. De weidegang geeft koeien meer bewegingsruimte en in de wei hebben de koeien ruimte voor hun natuurlijke graasgedrag. Zo kunt u blijven genieten van het karakteristieke landschap met koeien in de wei."
+      ]
+    },
+    "measurements": {
+      "netContent": [
+        {
+          "value": 1.5,
+          "measurementUnitCode": {
+            "value": "l",
+            "label": "Liter"
+          }
+        }
+      ],
+      "weight": {}
+    },
+    "consumerInstructions": {
+      "storageInstructions": [
+        "Ten minste houdbaar tot en met: zie bovenzijde, mits gekoeld bewaard (max. 7°C). Kijk, ruik en proef na deze datum. Na openen beperkt houdbaar."
+      ],
+      "usageInstructions": [],
+      "bacteriaWarningLogoPoultry": false
+    },
+    "foodAndBeveragePreparationServing": {
+      "preparationServing": [],
+      "servingQuantityInformation": {
+        "numberOfServingsPerPackage": 7.5
+      }
+    }
+  }
+}

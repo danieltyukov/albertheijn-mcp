@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>albertheijn-mcp</title>
+  <meta name="description" content="A local MCP server that lets Claude, ChatGPT, Cursor and other assistants search Albert Heijn, read the bonus, plan meal prep from recipes, and fill your basket after you approve a preview.">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:title" content="albertheijn-mcp">
+  <meta property="og:description" content="Do your Albert Heijn shopping from your AI assistant: products, bonus, recipes, meal prep plans, your list and your order. Local, open source.">
+  <meta property="og:image" content="https://danieltyukov.github.io/albertheijn-mcp/og.png">
+  <meta property="og:url" content="https://danieltyukov.github.io/albertheijn-mcp/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./"><img src="logo-mark.svg" alt=""> albertheijn-mcp</a>
+      <nav class="links">
+        <a href="https://github.com/danieltyukov/albertheijn-mcp">GitHub</a>
+        <a href="https://github.com/danieltyukov/albertheijn-mcp/blob/main/docs/tools.md">Tools</a>
+        <a href="https://github.com/danieltyukov/albertheijn-mcp/releases">Releases</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <h1>Your Albert Heijn shopping, <em>from your AI assistant.</em></h1>
+      <p class="lead">albertheijn-mcp is a small server that runs on your own computer. It lets Claude, ChatGPT, Cursor and other MCP clients search the Albert Heijn assortment, read this week's bonus, plan meal prep from recipes, and fill your basket once you have approved what goes in.</p>
+
+      <div class="install">
+        <input type="radio" name="t" id="t-unix" checked>
+        <input type="radio" name="t" id="t-win">
+        <input type="radio" name="t" id="t-npm">
+        <div class="tabs">
+          <label for="t-unix">macOS / Linux</label>
+          <label for="t-win">Windows</label>
+          <label for="t-npm">npm</label>
+        </div>
+        <div class="panel p-unix"><pre><code>curl -fsSL https://danieltyukov.github.io/albertheijn-mcp/install.sh | sh</code></pre><button class="copy" type="button">Copy</button></div>
+        <div class="panel p-win"><pre><code>irm https://danieltyukov.github.io/albertheijn-mcp/install.ps1 | iex</code></pre><button class="copy" type="button">Copy</button></div>
+        <div class="panel p-npm"><pre><code>npm install -g https://github.com/danieltyukov/albertheijn-mcp/releases/latest/download/albertheijn-mcp.tgz &amp;&amp; albertheijn-mcp setup</code></pre><button class="copy" type="button">Copy</button></div>
+      </div>
+      <p class="note">Needs Node 20 or newer. Works with Claude Desktop, Claude Code, ChatGPT, Codex, Cursor, VS Code, Windsurf, Zed and Gemini CLI.</p>
+    </div>
+
+    <section id="how">
+      <span class="eyebrow">How it works</span>
+      <ol class="steps">
+        <li><b>Install</b><span>One command installs the server and adds it to the MCP clients it finds on your computer.</span></li>
+        <li><b>Ask</b><span>Search products, check the bonus, find recipes or plan a week of meals. None of this needs an account.</span></li>
+        <li><b>Sign in when you want your list and orders</b><span>Run <code>albertheijn-mcp login</code>. A browser window opens on Albert Heijn's own login page, you sign in as usual, and the window closes by itself.</span></li>
+      </ol>
+    </section>
+
+    <section id="ask">
+      <span class="eyebrow">Things you can ask</span>
+      <ul class="ask">
+        <li>Plan five high-protein lunches for next week, under 30 euros.</li>
+        <li>What is on bonus this week that I usually buy?</li>
+        <li>Which Greek yoghurt gives the most protein per euro?</li>
+        <li>Shop for this recipe for four people.</li>
+        <li>When is the cheapest delivery slot this weekend?</li>
+        <li>How much did I spend per month since the summer?</li>
+        <li>Is this product vegan, and does it contain gluten?</li>
+        <li>Add milk and eggs to my list.</li>
+      </ul>
+    </section>
+
+    <section id="features">
+      <span class="eyebrow">What it covers</span>
+      <dl class="features">
+        <div><dt>Products</dt><dd>Search with bonus, brand, Nutri-Score, diet and allergy filters. Details with nutrition per 100 g, ingredients and allergens. Barcode lookup, and comparisons on price per kilo or protein per euro.</dd></div>
+        <div><dt>Bonus</dt><dd>This week's and next week's offers by section, every product in an offer, your personal Bonus Box, and basket totals with "2 voor" and "1 + 1 gratis" deals applied the way Albert Heijn applies them.</dd></div>
+        <div><dt>Recipes</dt><dd>Allerhande recipes by ingredient, diet or course, scaled to any number of servings, with Albert Heijn's product for each ingredient. Import recipes from other sites, or read any public web page for research.</dd></div>
+        <div><dt>Meal prep</dt><dd><code>plan_meal_prep</code> merges several recipes into one list. It finds a product for each ingredient, works out packs and leftovers, skips what you already have, and prices it all with the bonus.</dd></div>
+        <div><dt>Your list and order</dt><dd>The shopping list and favourite lists, your booked order with its closing time, delivery slots with their prices, past orders and the products you buy most.</dd></div>
+        <div><dt>Receipts and stores</dt><dd>In-store receipts and a monthly spending summary. Nearby stores with opening hours, and marked-down items in a store.</dd></div>
+      </dl>
+    </section>
+
+    <section id="orders">
+      <span class="eyebrow">Ordering, carefully</span>
+      <p>In the Albert Heijn app, your shopping list and your online order share one basket. Once you book a delivery, whatever is in that basket gets delivered and charged.</p>
+      <ul class="plain">
+        <li>While nothing is booked, the assistant edits your list directly. Nothing is bought.</li>
+        <li>Once a delivery is booked, every change first comes back as a preview: each product with its quantity before and after, the new total with bonus, and when the order closes. The change only goes through after you say yes.</li>
+        <li>A preview can be used once, only by the account that made it, and not if the basket changed in the meantime.</li>
+        <li>You still book the delivery slot and pay in the Albert Heijn app. The assistant can show you which slots are free and what each one costs.</li>
+      </ul>
+    </section>
+
+    <section id="privacy">
+      <span class="eyebrow">Privacy</span>
+      <ul class="plain">
+        <li>Everything runs on your computer. There is no hosted service and no account with anyone but Albert Heijn.</li>
+        <li>You type your password only on Albert Heijn's own login page.</li>
+        <li>Tokens stay in <code>~/.albertheijn-mcp</code> and only you can read them. No tool ever returns them.</li>
+        <li>Only the last four digits of your Bonus card are shown.</li>
+        <li>The web reader refuses local and private network addresses and marks page text as untrusted.</li>
+        <li><code>albertheijn-mcp logout</code> deletes the saved session.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <span class="eyebrow">Questions</span>
+      <details><summary>Do I need an Albert Heijn account?</summary><p>Not for products, bonus, recipes, stores, delivery slots for an address, or meal planning. You only need one for your list, orders, receipts and personal bonus.</p></details>
+      <details><summary>Can it place an order on its own?</summary><p>No. You book the delivery slot and pay in the Albert Heijn app. After that the assistant can fill the order, and every change to it needs your approval of a preview first.</p></details>
+      <details><summary>Which browsers work for signing in?</summary><p>Google Chrome, Microsoft Edge, Chromium or Brave. Without any of them, <code>albertheijn-mcp browser install</code> downloads Chromium, or <code>albertheijn-mcp login --manual</code> lets you sign in in any browser and paste the result back.</p></details>
+      <details><summary>Does it understand English recipes?</summary><p>Yes. Quantities and units are read in Dutch and English. Product names on Albert Heijn are Dutch, so the assistant passes Dutch search terms for English ingredients.</p></details>
+      <details><summary>How do I connect ChatGPT?</summary><p>Run <code>albertheijn-mcp serve --http --tunnel</code> and paste the URL it prints into ChatGPT's connector settings.</p></details>
+      <details><summary>Is this official?</summary><p>No. It is an independent open source project, not made or supported by Albert Heijn. It uses the same undocumented API as the Albert Heijn app, which can change without notice.</p></details>
+    </section>
+
+    <footer>
+      <span>MIT license</span>
+      <a href="https://github.com/danieltyukov/albertheijn-mcp/issues">Issues</a>
+      <a href="https://github.com/danieltyukov/albertheijn-mcp/blob/main/CONTRIBUTING.md">Contributing</a>
+      <span>Not affiliated with Albert Heijn.</span>
+    </footer>
+  </div>
+  <script>
+    for (const button of document.querySelectorAll('.copy')) {
+      button.addEventListener('click', async () => {
+        const text = button.parentElement.querySelector('code').textContent;
+        try { await navigator.clipboard.writeText(text); button.textContent = 'Copied'; }
+        catch { button.textContent = 'Select and copy'; }
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>

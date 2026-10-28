@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest a new tool, a change to an existing tool, or a new client.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The task in your own words, for example the question you would ask your assistant.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What the tool should do and return, and which part of the Albert Heijn app has the same feature.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - New read tool
+        - New action (needs a prepare and confirm pair if it touches an order)
+        - Change to an existing tool
+        - Meal planning or matching
+        - Installer, CLI or client setup
+        - Documentation
+        - Other

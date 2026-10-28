@@ -1,0 +1,50 @@
+name: Bug report
+description: Something does not work as described.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you paste anything: remove your name, address, email, Bonus card number, order and receipt contents, tokens and anything from `~/.albertheijn-mcp`.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `albertheijn-mcp --version`.
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Windows
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      placeholder: Claude Desktop, Cursor, ...
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you asked or which tool you called, what you expected, and what happened instead. Include the error code if a tool returned one.
+    validations:
+      required: true
+  - type: textarea
+    id: status
+    attributes:
+      label: Output of `albertheijn-mcp status`
+      render: json
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checks
+      options:
+        - label: I removed personal data and session material from this report.
+          required: true

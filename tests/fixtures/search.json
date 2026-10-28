@@ -1,0 +1,144 @@
+{
+  "page": {
+    "size": 3,
+    "totalElements": 66,
+    "totalPages": 22,
+    "number": 0
+  },
+  "products": [
+    {
+      "webshopId": 609672,
+      "hqId": 0,
+      "title": "Campina Langlekker halfvolle melk 3-pack",
+      "brand": "Campina",
+      "salesUnitSize": "3 stuks",
+      "unitPriceDescription": null,
+      "currentPrice": 5.1,
+      "priceBeforeBonus": 5.37,
+      "isBonus": true,
+      "bonusMechanism": "5% volume voordeel",
+      "bonusStartDate": "2026-10-28",
+      "bonusEndDate": "2999-12-31",
+      "promotionType": "AHONLINE",
+      "discountLabels": [
+        {
+          "code": "DISCOUNT_BUNDLE_BULK",
+          "defaultDescription": "5% volume voordeel",
+          "amount": null,
+          "deliveryType": null,
+          "count": null,
+          "freeCount": null,
+          "actualCount": null,
+          "price": null,
+          "percentage": 5,
+          "unit": null,
+          "precisePercentage": 5
+        }
+      ],
+      "mainCategory": "Zuivel, eieren",
+      "subCategory": "Houdbare melk",
+      "nutriscore": null,
+      "images": [
+        {
+          "width": 200,
+          "height": 200,
+          "url": "https://static.ah.nl/dam/product/AHI_4346476377375049537a4f347a59416c305754463167?revLabel=1&rendition=200x200_WEBP&fileType=binary"
+        }
+      ],
+      "availableOnline": true,
+      "isOrderable": true,
+      "orderAvailabilityStatus": "IN_ASSORTMENT",
+      "isVirtualBundle": true,
+      "virtualBundleItems": [
+        {
+          "productId": 469397,
+          "quantity": 3
+        }
+      ],
+      "isSponsored": false
+    },
+    {
+      "webshopId": 607680,
+      "hqId": 0,
+      "title": "Campina Langlekker halfvolle melk 12-pack 2-pack",
+      "brand": "Campina",
+      "salesUnitSize": "2 stuks",
+      "unitPriceDescription": null,
+      "currentPrice": 38.66,
+      "priceBeforeBonus": 42.96,
+      "isBonus": true,
+      "bonusMechanism": "10% volume voordeel",
+      "bonusStartDate": "2026-10-28",
+      "bonusEndDate": "2999-12-31",
+      "promotionType": "AHONLINE",
+      "discountLabels": [
+        {
+          "code": "DISCOUNT_BUNDLE_BULK",
+          "defaultDescription": "10% volume voordeel",
+          "amount": null,
+          "deliveryType": null,
+          "count": null,
+          "freeCount": null,
+          "actualCount": null,
+          "price": null,
+          "percentage": 10,
+          "unit": null,
+          "precisePercentage": 10
+        }
+      ],
+      "mainCategory": "Zuivel, eieren",
+      "subCategory": "Halfvolle melk",
+      "nutriscore": null,
+      "images": [
+        {
+          "width": 200,
+          "height": 200,
+          "url": "https://static.ah.nl/dam/product/AHI_4143665136543448513069655a75394f454e74707141?revLabel=1&rendition=200x200_WEBP&fileType=binary"
+        }
+      ],
+      "availableOnline": true,
+      "isOrderable": true,
+      "orderAvailabilityStatus": "IN_ASSORTMENT",
+      "isVirtualBundle": true,
+      "virtualBundleItems": [
+        {
+          "productId": 505322,
+          "quantity": 2
+        }
+      ],
+      "isSponsored": false
+    },
+    {
+      "webshopId": 33693,
+      "hqId": 92154,
+      "title": "AH Halfvolle melk",
+      "brand": "AH",
+      "salesUnitSize": "1,5 l",
+      "unitPriceDescription": "prijs per liter €1.19",
+      "currentPrice": null,
+      "priceBeforeBonus": 1.79,
+      "isBonus": false,
+      "bonusMechanism": null,
+      "bonusStartDate": null,
+      "bonusEndDate": null,
+      "promotionType": null,
+      "discountLabels": [],
+      "mainCategory": "Zuivel, eieren",
+      "subCategory": "Halfvolle melk",
+      "nutriscore": "B",
+      "images": [
+        {
+          "width": 200,
+          "height": 200,
+          "url": "https://static.ah.nl/dam/product/AHI_6450356b7238614d537371596c645f596a686e315a67?revLabel=1&rendition=200x200_WEBP&fileType=binary"
+        }
+      ],
+      "availableOnline": true,
+      "isOrderable": true,
+      "orderAvailabilityStatus": "IN_ASSORTMENT",
+      "isVirtualBundle": false,
+      "virtualBundleItems": null,
+      "isSponsored": false
+    }
+  ]
+}
