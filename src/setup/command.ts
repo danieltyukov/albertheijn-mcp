@@ -1,3 +1,4 @@
+import { realpathSync } from 'node:fs';
 import { isAbsolute, resolve } from 'node:path';
 import { VERSION } from '../version.js';
 
@@ -34,6 +35,12 @@ export function serverCommand(options: CommandOptions = {}): ServerEntry {
   }
   const given = options.entry ?? process.argv[1] ?? 'dist/cli.js';
   let entry = isAbsolute(given) ? given : resolve(given);
+  // A global install runs through npm's bin symlink; write the file it points to.
+  try {
+    entry = realpathSync(entry);
+  } catch {
+    /* keep the path as given */
+  }
   // Running from source through tsx: clients need the built entry point instead.
   entry = entry.replace(/([\\/])src[\\/]cli\.ts$/, '$1dist$1cli.js');
   return { command: options.execPath ?? process.execPath, args: [entry, 'serve'] };

@@ -1,3 +1,6 @@
+import { mkdir, mkdtemp, realpath, symlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { serverCommand } from '../src/setup/command.js';
 import { VERSION } from '../src/version.js';
@@ -15,6 +18,19 @@ describe('serverCommand', () => {
       command: node,
       args: [globalEntry, 'serve'],
     });
+  });
+
+  it.skipIf(process.platform === 'win32')('follows the npm bin symlink to the real cli.js', async () => {
+    const dir = await realpath(await mkdtemp(join(tmpdir(), 'ah-setup-')));
+    const cli = join(dir, 'lib', 'node_modules', 'albertheijn-mcp', 'dist', 'cli.js');
+    await mkdir(join(dir, 'lib', 'node_modules', 'albertheijn-mcp', 'dist'), { recursive: true });
+    await mkdir(join(dir, 'bin'));
+    await writeFile(cli, '');
+    await symlink(cli, join(dir, 'bin', 'albertheijn-mcp'));
+    expect(serverCommand({ entry: join(dir, 'bin', 'albertheijn-mcp'), execPath: node }).args).toEqual([
+      cli,
+      'serve',
+    ]);
   });
 
   it('points a source checkout at the built entry point', () => {
