@@ -234,9 +234,12 @@ export class AhClient {
         headers,
         ...(options.body !== undefined ? { body: JSON.stringify(options.body) } : {}),
       });
-      if (response.status === 401) {
+      // The API sometimes drops an anonymous token before it expires and answers 400
+      // instead of 401. A fresh anonymous token is cheap, so try once more with one.
+      if (response.status === 401 || (response.status === 400 && !user && attempt === 0)) {
         if (attempt === 0 && user && (await this.refreshUser(true))) continue;
         if (attempt === 0 && !user) {
+          debug(`${url.pathname} refused the anonymous token (${response.status}), getting a new one`);
           await this.session.update((data) => {
             delete data.anonymous;
           });
@@ -272,6 +275,7 @@ export class AhClient {
         throw new AhError('PERMISSION_DENIED', 'Albert Heijn refused this request for your account.');
       if (!response.ok) {
         const detail = await response.text().catch(() => '');
+        debug(`${url.pathname} answered ${response.status}: ${redact(detail.slice(0, 300))}`);
         throw new AhError('UNAVAILABLE', `Albert Heijn answered with HTTP ${response.status}.`, {
           status: response.status,
           ...(detail && detail.length < 300 && !/token/i.test(detail) ? { detail: redact(detail) } : {}),

@@ -20,6 +20,23 @@ describe('AhClient', () => {
     expect(anon.body).toEqual({ clientId: 'appie-ios' });
   });
 
+  it('gets a new anonymous token when the saved one is refused with a 400', async () => {
+    const ctx = await anonymousContext();
+    let n = 0;
+    const calls = mockApi({
+      '/mobile-services/z': () => (++n === 1 ? new Response('{}', { status: 400 }) : { ok: n }),
+    });
+    await expect(ctx.ah.request('/mobile-services/z')).resolves.toEqual({ ok: 2 });
+    expect(calls.filter((c) => c.path.endsWith('/anonymous'))).toHaveLength(2);
+  });
+
+  it('reports a 400 that a new anonymous token does not fix', async () => {
+    const ctx = await anonymousContext();
+    const calls = mockApi({ '/mobile-services/z': () => new Response('{}', { status: 400 }) });
+    await expect(ctx.ah.request('/mobile-services/z')).rejects.toMatchObject({ code: 'UNAVAILABLE' });
+    expect(calls.filter((c) => c.path === '/mobile-services/z')).toHaveLength(2);
+  });
+
   it('refuses user endpoints without a session', async () => {
     const ctx = await anonymousContext();
     mockApi({});
