@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { authorizeUrl, extractCode } from '../src/auth/login.js';
+import { authorizeUrl, extractCode, loginRefused } from '../src/auth/login.js';
 import { loadConfig } from '../src/config.js';
 
 describe('login helpers', () => {
@@ -9,6 +9,14 @@ describe('login helpers', () => {
     expect(url.searchParams.get('client_id')).toBe('appie-ios');
     expect(url.searchParams.get('redirect_uri')).toBe('appie://login-exit');
     expect(url.searchParams.get('response_type')).toBe('code');
+  });
+
+  it('recognises the login page being refused, not other 403s', () => {
+    const login = 'https://login.ah.nl';
+    expect(loginRefused(403, 'document', 'https://login.ah.nl/login?client_id=appie-ios', login)).toBe(true);
+    expect(loginRefused(403, 'xhr', 'https://login.ah.nl/api/x', login)).toBe(false);
+    expect(loginRefused(403, 'document', 'https://www.ah.nl/', login)).toBe(false);
+    expect(loginRefused(200, 'document', 'https://login.ah.nl/login', login)).toBe(false);
   });
 
   it('pulls the code out of whatever the user pastes', () => {

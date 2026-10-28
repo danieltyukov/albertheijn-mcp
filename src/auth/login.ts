@@ -36,6 +36,21 @@ export function extractCode(input: string): string | undefined {
   return undefined;
 }
 
+/** True when the login site answered a page load with 403, which is how its bot protection refuses a window. */
+export function loginRefused(
+  status: number,
+  resourceType: string,
+  url: string,
+  loginOrigin: string,
+): boolean {
+  if (status !== 403 || resourceType !== 'document') return false;
+  try {
+    return new URL(url).hostname === new URL(loginOrigin).hostname;
+  } catch {
+    return false;
+  }
+}
+
 export interface LoginReport {
   signedIn: boolean;
   name?: string;
@@ -144,11 +159,33 @@ export async function browserLogin(ctx: AppContext, log: Logger): Promise<LoginR
         ctx.config.loginTimeoutMs,
       ).unref(),
     );
+    const refused = new Promise<never>((_, reject) =>
+      context!.on('response', (response) => {
+        if (
+          loginRefused(
+            response.status(),
+            response.request().resourceType(),
+            response.url(),
+            ctx.config.loginUrl,
+          )
+        ) {
+          reject(
+            new AhError(
+              'LOGIN_BLOCKED',
+              'Albert Heijn refused the sign-in window. Run "albertheijn-mcp login --manual" and sign in with your normal browser.',
+            ),
+          );
+        }
+      }),
+    );
+    // Both can reject while goto is still pending, before the race below is listening.
+    closed.catch(() => undefined);
+    refused.catch(() => undefined);
     await page
       .goto(authorizeUrl(ctx.config.loginUrl), { waitUntil: 'domcontentloaded' })
       .catch(() => undefined);
     try {
-      const code = await Promise.race([watcher.code, closed, timeout]);
+      const code = await Promise.race([watcher.code, closed, timeout, refused]);
       return await completeLogin(ctx, code, 'browser');
     } finally {
       watcher.stop();
