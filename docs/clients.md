@@ -7,18 +7,24 @@ with `--all` to configure every detected client, with client ids to force specif
 (`albertheijn-mcp setup cursor zed`), with `--dry-run` to only print what would change, or with
 `--json` for a machine-readable summary.
 
-The command it writes depends on how the package is installed:
+By default it writes the absolute path of `node` and of the installed `dist/cli.js`. Claude
+Desktop, Cursor and other desktop apps do not read your shell's PATH, so a bare
+`albertheijn-mcp` installed through nvm, fnm or Homebrew would not be found there. The cost is
+that after switching Node versions with a version manager you run `albertheijn-mcp setup`
+again.
 
-| Situation                         | Command                 | Arguments                            |
-| --------------------------------- | ----------------------- | ------------------------------------ |
-| `npm install -g albertheijn-mcp`  | `albertheijn-mcp`       | `["serve"]`                          |
-| Local checkout or unusual install | absolute path to `node` | `["<path>/dist/cli.js", "serve"]`    |
-| `--command npx`                   | `npx`                   | `["-y", "albertheijn-mcp", "serve"]` |
-| `--command node`                  | absolute path to `node` | `["<path>/dist/cli.js", "serve"]`    |
+| Option          | Command                 | Arguments                                                            |
+| --------------- | ----------------------- | -------------------------------------------------------------------- |
+| default         | absolute path to `node` | `["<path>/dist/cli.js", "serve"]`                                    |
+| `--command npx` | `npx`                   | `["-y", "--package=<release .tgz URL>", "albertheijn-mcp", "serve"]` |
 
-The snippets below use `albertheijn-mcp serve`. Replace it with the variant that applies to you.
-On Windows, if a client cannot start `albertheijn-mcp` (an npm `.cmd` shim), run
-`albertheijn-mcp setup --command node` so the config points at `node.exe` directly.
+`--command npx` needs no global install. It fetches the GitHub release of the version you ran
+setup with, not a package from the npm registry.
+
+The snippets below use `albertheijn-mcp serve` to keep them short. That works when the client
+inherits a PATH that contains `albertheijn-mcp`, which is usually true for terminal clients
+such as Claude Code, Codex and Gemini CLI. For desktop apps use the absolute paths that setup
+prints with `--dry-run`.
 
 After any change: run `albertheijn-mcp login` once, then restart the client.
 

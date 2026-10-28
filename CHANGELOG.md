@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Changed
+
+- `setup` writes the absolute paths of `node` and the installed `cli.js` by default. Desktop apps such as Claude Desktop do not read the shell's PATH, so the bare `albertheijn-mcp` command it wrote before was not found when Node came from nvm, fnm or Homebrew.
+
+### Security
+
+- `setup --command npx` runs the GitHub release of the installed version instead of the npm registry name, which this project has not published.
+
 ## [0.1.1] - 2026-10-28
 
 ### Fixed

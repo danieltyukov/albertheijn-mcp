@@ -143,7 +143,7 @@ export async function runSetup(
 ): Promise<void> {
   const dryRun = args.flags['dry-run'] === true;
   const json = args.flags.json === true;
-  const command = serverCommand({ mode: commandMode(args.flags.command), setup });
+  const command = serverCommand({ mode: commandMode(args.flags.command) });
   const clients = createClients(setup);
   const selected = await select(clients, args, json);
   if (!selected?.length) return;

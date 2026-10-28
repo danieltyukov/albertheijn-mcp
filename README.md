@@ -73,6 +73,8 @@ Any other client:
 }
 ```
 
+Desktop apps such as Claude Desktop do not read your shell's PATH. If yours cannot start `albertheijn-mcp`, `albertheijn-mcp setup --dry-run` prints the same entry with absolute paths.
+
 ChatGPT needs a public URL. Run `albertheijn-mcp serve --http --tunnel` and paste the printed URL into ChatGPT's connector settings.
 
 ## Tools
