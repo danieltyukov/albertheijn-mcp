@@ -1,5 +1,10 @@
+import { lookup as dnsLookup, type LookupAddress, type LookupOptions } from 'node:dns';
 import { lookup } from 'node:dns/promises';
-import { isIP } from 'node:net';
+import { request as httpRequest } from 'node:http';
+import { request as httpsRequest } from 'node:https';
+import { BlockList, isIP } from 'node:net';
+import { Readable } from 'node:stream';
+import { createBrotliDecompress, createGunzip, createInflate } from 'node:zlib';
 import { AhError } from '../errors.js';
 import { VERSION } from '../version.js';
 
@@ -20,31 +25,151 @@ export interface SafeFetchOptions {
 
 const MAX_REDIRECTS = 5;
 
-/** True for loopback, private, link-local, carrier-grade NAT, multicast and reserved ranges. */
+const BLOCKED_V4 = new BlockList();
+for (const [network, prefix] of [
+  ['0.0.0.0', 8],
+  ['10.0.0.0', 8],
+  ['100.64.0.0', 10],
+  ['127.0.0.0', 8],
+  ['169.254.0.0', 16],
+  ['172.16.0.0', 12],
+  ['192.0.0.0', 24],
+  ['192.168.0.0', 16],
+  ['198.18.0.0', 15],
+  ['224.0.0.0', 3],
+] as const)
+  BLOCKED_V4.addSubnet(network, prefix, 'ipv4');
+
+// Kept separate: a BlockList also matches IPv4 addresses against IPv4-mapped IPv6 rules.
+const BLOCKED_V6 = new BlockList();
+for (const [network, prefix] of [
+  ['64:ff9b:1::', 48], // local-use NAT64
+  ['100::', 64], // discard
+  ['2001:db8::', 32], // documentation
+  ['fc00::', 7], // unique local
+  ['fe80::', 10], // link-local
+  ['fec0::', 10], // old site-local
+  ['ff00::', 8], // multicast
+] as const)
+  BLOCKED_V6.addSubnet(network, prefix, 'ipv6');
+
+/** The 16 bytes of an IPv6 address, including forms with "::" and a trailing dotted IPv4. */
+export function ipv6Bytes(address: string): number[] | undefined {
+  let text = address.toLowerCase();
+  const dotted = /(\d+\.\d+\.\d+\.\d+)$/.exec(text);
+  if (dotted?.[1]) {
+    const parts = dotted[1].split('.').map(Number);
+    if (parts.some((n) => n > 255)) return undefined;
+    text = `${text.slice(0, -dotted[1].length)}${((parts[0]! << 8) | parts[1]!).toString(16)}:${((parts[2]! << 8) | parts[3]!).toString(16)}`;
+  }
+  const halves = text.split('::');
+  if (halves.length > 2) return undefined;
+  const head = halves[0] ? halves[0].split(':') : [];
+  const tail = halves.length === 2 && halves[1] ? halves[1].split(':') : [];
+  const missing = 8 - head.length - tail.length;
+  if (halves.length === 1 ? missing !== 0 : missing < 0) return undefined;
+  const groups = [...head, ...Array<string>(halves.length === 2 ? missing : 0).fill('0'), ...tail];
+  const bytes: number[] = [];
+  for (const group of groups) {
+    if (!/^[0-9a-f]{1,4}$/.test(group)) return undefined;
+    const value = parseInt(group, 16);
+    bytes.push(value >> 8, value & 0xff);
+  }
+  return bytes;
+}
+
+/**
+ * True for loopback, private, link-local, carrier-grade NAT, multicast and reserved
+ * ranges, including IPv4 addresses written inside IPv6 (mapped, compatible, NAT64) in
+ * any notation. Anything that is not an IP address counts as private.
+ */
 export function isPrivateAddress(address: string): boolean {
-  const version = isIP(address);
-  if (version === 4) {
-    const [a = 0, b = 0] = address.split('.').map(Number);
-    return (
-      a === 0 ||
-      a === 10 ||
-      a === 127 ||
-      (a === 100 && b >= 64 && b <= 127) ||
-      (a === 169 && b === 254) ||
-      (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) ||
-      (a === 198 && (b === 18 || b === 19)) ||
-      a >= 224
+  const bare = address.replace(/^\[|\]$/g, '').split('%')[0]!;
+  const version = isIP(bare);
+  if (version === 4) return BLOCKED_V4.check(bare, 'ipv4');
+  if (version !== 6) return true;
+  const bytes = ipv6Bytes(bare);
+  if (!bytes) return true;
+  const zeros = (from: number, to: number) => bytes.slice(from, to).every((b) => b === 0);
+  const v4 = bytes.slice(12).join('.');
+  // ::, ::1 and the deprecated IPv4-compatible ::a.b.c.d form.
+  if (zeros(0, 12)) return true;
+  // IPv4-mapped ::ffff:a.b.c.d
+  if (zeros(0, 10) && bytes[10] === 0xff && bytes[11] === 0xff) return BLOCKED_V4.check(v4, 'ipv4');
+  // NAT64 64:ff9b::a.b.c.d
+  if (bytes[0] === 0 && bytes[1] === 0x64 && bytes[2] === 0xff && bytes[3] === 0x9b && zeros(4, 12))
+    return BLOCKED_V4.check(v4, 'ipv4');
+  return BLOCKED_V6.check(bare, 'ipv6');
+}
+
+/**
+ * DNS lookup for outgoing page requests that refuses private answers, so the address
+ * checked is the address connected to (no DNS rebinding between check and connect).
+ */
+export function guardedLookup(
+  hostname: string,
+  options: LookupOptions,
+  callback: (error: NodeJS.ErrnoException | null, address: string | LookupAddress[], family?: number) => void,
+): void {
+  dnsLookup(hostname, { all: true, verbatim: true }, (error, addresses) => {
+    if (error) return callback(error, '');
+    const list = addresses as LookupAddress[];
+    if (!list.length || list.some((a) => isPrivateAddress(a.address))) {
+      return callback(Object.assign(new Error('refused private address'), { code: 'EPRIVATE' }), '');
+    }
+    if (options.all) return callback(null, list);
+    const first = options.family ? (list.find((a) => a.family === options.family) ?? list[0]!) : list[0]!;
+    callback(null, first.address, first.family);
+  });
+}
+
+/** fetch-like GET over node:http(s) with the guarded lookup and transparent decompression. */
+export function pinnedFetch(
+  url: URL,
+  init: { headers: Record<string, string>; signal: AbortSignal },
+): Promise<Response> {
+  return new Promise((resolve, reject) => {
+    const send = url.protocol === 'https:' ? httpsRequest : httpRequest;
+    const req = send(
+      url,
+      {
+        method: 'GET',
+        headers: { ...init.headers, 'Accept-Encoding': 'gzip, deflate, br' },
+        lookup: guardedLookup as never,
+        signal: init.signal,
+      },
+      (res) => {
+        const encoding = String(res.headers['content-encoding'] ?? '').toLowerCase();
+        let stream: Readable = res;
+        if (encoding === 'gzip' || encoding === 'x-gzip') stream = res.pipe(createGunzip());
+        else if (encoding === 'deflate') stream = res.pipe(createInflate());
+        else if (encoding === 'br') stream = res.pipe(createBrotliDecompress());
+        const headers = new Headers();
+        for (const [key, value] of Object.entries(res.headers)) {
+          if (value === undefined || key === 'content-encoding' || (encoding && key === 'content-length'))
+            continue;
+          headers.set(key, Array.isArray(value) ? value.join(', ') : value);
+        }
+        const status = res.statusCode ?? 502;
+        const empty = status === 204 || status === 304;
+        if (empty) res.resume();
+        resolve(
+          new Response(empty ? null : (Readable.toWeb(stream) as ReadableStream<Uint8Array>), {
+            status: status < 200 || status > 599 ? 502 : status,
+            headers,
+          }),
+        );
+      },
     );
-  }
-  if (version === 6) {
-    const lower = address.toLowerCase();
-    if (lower === '::' || lower === '::1') return true;
-    const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(lower);
-    if (mapped?.[1]) return isPrivateAddress(mapped[1]);
-    return /^(fc|fd|fe8|fe9|fea|feb|ff)/.test(lower);
-  }
-  return true;
+    req.on('error', (error: NodeJS.ErrnoException) =>
+      reject(
+        error.code === 'EPRIVATE'
+          ? new AhError('INVALID_URL', 'That host points to a private or local address.')
+          : error,
+      ),
+    );
+    req.end();
+  });
 }
 
 async function defaultResolve(host: string): Promise<string[]> {
@@ -97,13 +222,21 @@ async function assertPublicHost(url: URL, resolve: (host: string) => Promise<str
  */
 export async function safeFetch(raw: string, options: SafeFetchOptions): Promise<FetchedPage> {
   const resolve = options.resolve ?? defaultResolve;
-  const fetcher = options.fetchImpl ?? fetch;
+  const fetcher =
+    options.fetchImpl ??
+    ((target: URL, init: { headers: Record<string, string>; signal: AbortSignal }) =>
+      pinnedFetch(target, init));
   let url = parsePublicUrl(raw);
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
     await assertPublicHost(url, resolve);
     let response: Response;
     try {
-      response = await fetcher(url, {
+      response = await (
+        fetcher as (
+          u: URL,
+          i: RequestInit & { headers: Record<string, string>; signal: AbortSignal },
+        ) => Promise<Response>
+      )(url, {
         redirect: 'manual',
         signal: AbortSignal.timeout(options.timeoutMs),
         headers: {
@@ -113,7 +246,9 @@ export async function safeFetch(raw: string, options: SafeFetchOptions): Promise
         },
       });
     } catch (error) {
-      const timeout = error instanceof Error && error.name === 'TimeoutError';
+      if (error instanceof AhError) throw error;
+      const timeout =
+        error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
       throw new AhError(
         'EXTERNAL_RESOURCE',
         timeout ? 'The page took too long to respond.' : 'The page could not be reached.',

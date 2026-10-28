@@ -86,7 +86,7 @@ Matching a Dutch product to an English ingredient works best when the model pass
 
 ### Reading the web
 
-`read_web_page` and `import_recipe` fetch only public http and https URLs on default ports. Every redirect hop is checked against loopback, private, link-local and reserved address ranges, responses are capped at 5 MB, and page text is returned as data with a note that it is untrusted. The host is resolved before connecting; a DNS answer that changes between that check and the connection is not caught, which is acceptable for a tool that runs on the user's own machine and fetches pages the user's assistant asked for.
+`read_web_page` and `import_recipe` fetch only public http and https URLs on default ports. Addresses are classified with IPv4 written inside IPv6 (mapped, compatible, NAT64) unwrapped first. The connection uses a DNS lookup that refuses private answers, so the address that was checked is the one connected to. Every redirect hop is checked again, responses are capped at 5 MB, and page text is returned with a note that it is untrusted.
 
 ### Pacing and caching
 

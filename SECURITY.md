@@ -12,7 +12,7 @@ In scope:
 
 - The session file under `~/.albertheijn-mcp`, its permissions and the DPAPI wrapping on Windows, and any way a token could reach the model, a log or another user.
 - Order safety: changing a booked order without a preview, reusing a confirmation token, applying a preview after the basket changed, or acting on a different product or quantity than the one shown.
-- The web reader (`read_web_page`, `import_recipe`): reaching local or private network addresses, redirect tricks, or reading past the size limit. The host is resolved before connecting; a DNS answer that changes between that check and the connection is a known limitation.
+- The web reader (`read_web_page`, `import_recipe`): reaching local or private network addresses (including IPv4 written inside IPv6, and DNS answers that change between check and connect, which the pinned lookup is meant to stop), redirect tricks, or reading past the size limit.
 - Prompt injection, where text from a web page, recipe or product steers the server into an action the user did not ask for.
 - The HTTP transport (bearer token, binding, the tunnel option), the installers and the release workflow.
 

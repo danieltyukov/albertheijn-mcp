@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isPrivateAddress, parsePublicUrl, safeFetch } from '../src/web/safe-fetch.js';
+import { guardedLookup, isPrivateAddress, parsePublicUrl, safeFetch } from '../src/web/safe-fetch.js';
 
 const publicDns = async () => ['93.184.216.34'];
 
@@ -26,7 +26,29 @@ describe('safe fetch', () => {
       '0.0.0.0',
     ])
       expect(isPrivateAddress(ip), ip).toBe(true);
-    for (const ip of ['93.184.216.34', '2a00:1450:4001::1']) expect(isPrivateAddress(ip), ip).toBe(false);
+    for (const ip of ['93.184.216.34', '2a00:1450:4001::1', '::ffff:5db8:d822', '64:ff9b::5db8:d822'])
+      expect(isPrivateAddress(ip), ip).toBe(false);
+  });
+
+  it('sees IPv4 inside IPv6 in every notation the URL parser produces', () => {
+    for (const ip of [
+      '::ffff:7f00:1',
+      '::ffff:a9fe:a9fe',
+      '64:ff9b::7f00:1',
+      '::7f00:1',
+      '::127.0.0.1',
+      'fe80::1%eth0',
+      'not-an-ip',
+    ])
+      expect(isPrivateAddress(ip), ip).toBe(true);
+    for (const url of [
+      'http://[::ffff:127.0.0.1]/',
+      'http://[::ffff:169.254.169.254]/',
+      'http://[64:ff9b::a00:1]/',
+      'http://0x7f.1/',
+      'http://2130706433/',
+    ])
+      expect(() => parsePublicUrl(url), url).toThrow();
   });
 
   it('refuses local, private, credentialed and odd-port URLs', () => {
@@ -94,5 +116,14 @@ describe('safe fetch', () => {
     ).rejects.toMatchObject({
       code: 'FILE_TOO_LARGE',
     });
+  });
+});
+
+describe('guarded lookup', () => {
+  it('refuses a hostname that resolves to loopback', async () => {
+    const error = await new Promise<NodeJS.ErrnoException | null>((resolve) =>
+      guardedLookup('localhost', {}, (e) => resolve(e)),
+    );
+    expect(error?.code).toBe('EPRIVATE');
   });
 });
