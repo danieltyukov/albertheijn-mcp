@@ -117,7 +117,7 @@ In the Albert Heijn app, the shopping list and the online order share one basket
 
 Everything runs on your machine. The server talks to api.ah.nl and login.ah.nl, plus any web page you ask it to read. `read_web_page` and `import_recipe` refuse local and private network addresses, check each redirect, and return page text marked as untrusted. `albertheijn-mcp logout` deletes the session and the browser profile.
 
-No browser on the machine? Run `albertheijn-mcp login --manual`. You open the login page anywhere, sign in, and paste back the address the page redirects to.
+No browser on the machine, or the login page refuses the window it opens? Run `albertheijn-mcp login --manual`. It prints the login address. Open it in your normal browser with the developer tools open on the Network tab, sign in, and paste back the `appie://login-exit?code=...` address the page redirects to.
 
 ## Requirements
 

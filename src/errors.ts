@@ -8,6 +8,7 @@ export type ErrorCode =
   | 'LOGIN_IN_PROGRESS'
   | 'LOGIN_TIMEOUT'
   | 'LOGIN_CANCELLED'
+  | 'LOGIN_BLOCKED'
   | 'BROWSER_NOT_FOUND'
   | 'ACCOUNT_CHANGED'
   | 'NOT_FOUND'

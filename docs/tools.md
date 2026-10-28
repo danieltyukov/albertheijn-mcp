@@ -61,7 +61,7 @@ Annotations: read-only, idempotent, talks to Albert Heijn or the web.
 
 **Sign in to Albert Heijn**
 
-Opens a browser window on the Albert Heijn login page on the computer running this server and waits up to ten minutes for the user to sign in. Call only when the user asks to sign in. If no browser can be opened, ask the user to sign in at the URL from auth_status and pass the address they land on (appie://login-exit?code=...) as redirectUrl.
+Opens a browser window on the Albert Heijn login page on the computer running this server and waits up to ten minutes for the user to sign in. Call only when the user asks to sign in. If it returns LOGIN_BLOCKED or BROWSER_NOT_FOUND, give the user the login address (run "albertheijn-mcp login --manual" to print it), let them sign in with their normal browser, and pass the appie://login-exit?code=... address they end on as redirectUrl.
 
 Annotations: may write, idempotent, local only.
 
