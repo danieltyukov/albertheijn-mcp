@@ -1,6 +1,6 @@
 # Albert Heijn API notes
 
-What albertheijn-mcp knows about the API the Albert Heijn mobile app uses. None of it is documented or supported by Albert Heijn, so treat every line as "worked on the date it was checked". The live checks below were run on 28 October 2026 with an anonymous token.
+What albertheijn-mcp knows about the API the Albert Heijn mobile app uses. None of it is documented or supported by Albert Heijn, so treat every line as "worked on the date it was checked". The live checks below were run on 28 October 2026 with an anonymous token, and on 29 October 2026 with a signed-in account for the account calls (section 6 and the member profile).
 
 This builds on the work of earlier community projects, credited by their short codes in the text:
 
@@ -11,21 +11,10 @@ This builds on the work of earlier community projects, credited by their short c
 | MS    | [mrserzhan/ah-mcp](https://github.com/mrserzhan/ah-mcp)                                         |
 | MK    | [markooms/openclaw-skill-albert-heijn](https://github.com/markooms/openclaw-skill-albert-heijn) |
 | NB    | [NickBouwhuis/Albert-Heijn-OpenAPI](https://github.com/NickBouwhuis/Albert-Heijn-OpenAPI)       |
-| LIVE  | checked against the API on 28 October 2026                                                      |
+| LIVE  | checked against the API on 28 October 2026 (anonymous) or 29 October 2026 (signed in)           |
 | PROBE | found by trying calls and reading GraphQL validation messages                                   |
 
 Auth column legend: **anon** works with an anonymous token, **user** needs a signed-in member token, **anon?** untested.
-
-|---|---|---|
-| FX | fedorov-xyz_ah-mcp | 2026-10-15 | Newest. Says "verified against the live API on 2026-10-01" on basket, list, orders, receipts, bonus. Built on appie-go plus ports from MaxTomahawk/bramboe/Jelle7 forks. |
-| AG | gwillem_appie-go | 2026-09-23 | Library code (`*.go`) is newer than its own `doc/albertheijn_api.md` (Jan-Mar 2026 captures). Where they differ, trust the code. |
-| MK | markooms_openclaw-skill-albert-heijn | 2026-04-21 | Uses appie-go v0.0.4 plus raw calls. Several raw GraphQL queries are now invalid (see Recipes). |
-| MS | mrserzhan_ah-mcp | 2026-03-21 | Thin MCP over appie-go; adds raw v2 shopping-list calls and closed-order query. |
-| NB | NickBouwhuis_Albert-Heijn-OpenAPI | 2023-03-10 | Oldest. Only source for REST delivery slots, Bonus Box activation, purchase stamps. |
-| LIVE | curl from this machine, 2026-10-28, anonymous token only | | Status codes and trimmed shapes are in section 11. |
-| PROBE | LIVE call not present in any repo (found by trying names / reading GraphQL validation errors) | | |
-
-Auth column legend: **anon** = works with an anonymous token (LIVE-confirmed unless stated), **user** = needs a logged-in member token, **anon?** = untested.
 
 ---
 
@@ -605,10 +594,11 @@ Two different things share the name:
 
 ### 6.3 Favourite lists (user)
 
-- `GET /mobile-services/lists/v3/lists?productId=<any int>` → `[{id (uuid), description, itemCount, hasFavoriteProduct, productImages}]`; `productId` is required but ignored (AG).
-- Items: GraphQL `favoriteListV2(ids: [String!]!, productIds: [Int!]) { id description totalSize imageUrl items { id productId quantity } }` with **uppercase** UUIDs (AG `GetShoppingListItems`), or REST `GET /mobile-services/lists/v3/lists/<id>/items` (MK).
-- Add: `mutation AddProductsToFavoriteList($favoriteListId: String!, $products: [FavoriteListProductMutation!]!) { favoriteListProductsAddV2(id: $favoriteListId, products: $products) { status errorMessage } }`, products `[{productId, quantity}]` (AG).
-- Remove: `mutation DeleteProductsFromFavoriteList($favoriteListId: String!, $itemIds: [String!]!) { favoriteListProductsDeleteV2(id: $favoriteListId, itemIds: $itemIds) { status errorMessage } }` (AG; item ids come from `favoriteListV2.items[].id`).
+- List all: GraphQL `favoriteListV2(ids: [])` with an **empty** id list returns every list, `[{id (lowercase uuid), description, totalSize}]` (PROBE, LIVE 2026-10-29). A new account has one list, "Mijn favorieten".
+- `GET /mobile-services/lists/v3/lists?productId=<any int>` (AG) now answers `404 {"error":"not_found","error_description":"404 NOT_FOUND"}` for every variant tried, including `/v2/lists` and no `productId` (LIVE 2026-10-29).
+- Items: GraphQL `favoriteListV2(ids: [String!]!, productIds: [Int!]) { id description totalSize imageUrl items { id productId quantity } }` (AG `GetShoppingListItems` passes **uppercase** UUIDs; LIVE: uppercase works). REST `GET /mobile-services/lists/v3/lists/<id>/items` (MK) not checked.
+- Add: `mutation AddProductsToFavoriteList($favoriteListId: String!, $products: [FavoriteListProductMutation!]!) { favoriteListProductsAddV2(id: $favoriteListId, products: $products) { status errorMessage } }`, products `[{productId, quantity}]` (AG, LIVE 2026-10-29).
+- Remove: `mutation DeleteProductsFromFavoriteList($favoriteListId: String!, $itemIds: [String!]!) { favoriteListProductsDeleteV2(id: $favoriteListId, itemIds: $itemIds) { status errorMessage } }` (AG; item ids come from `favoriteListV2.items[].id`; LIVE 2026-10-29).
 - Schema-only: `favoriteListAddV2`, `favoriteListChangeV2`, `favoriteListDeleteV2`, sharing mutations.
 
 ---
@@ -1174,3 +1164,11 @@ query Slots($address: MemberAddressInput!) {
 `address` needs `street`, `houseNumber` (Int), `postalCode`, `city` and `countryCode` (`NLD`); `houseNumberExtra` is optional. It returns 14 days. `date` is midnight Amsterdam time in UTC; `dateFormatted` is the local date. Slot times are UTC. Works with an anonymous token. `orderPickupSlots(pickupLocationId: Int!)` needs a pick-up point id.
 
 Reserving a slot has no known call. Booking happens in the app; once an order exists, `basketItemsAdd` and `basketItemsUpdate` change it until its closing time.
+
+## 14. Account checks, 29 October 2026 (new account, signed in)
+
+Run with `npm run test:live:account` plus a one-off sweep of every account read tool, on an account created the same day.
+
+- Sign-in: the headed Chrome window on `login.ah.nl` was not refused by its bot protection, and the `appie://login-exit` code exchanged for tokens. Headless Chrome is still refused (section 2).
+- Worked: member profile (`member`), basket and list read, list product add and remove plus a free-text note through the v2 PATCH (6.2), the preview and confirm pair on the list while nothing is booked, favourite lists read, add and remove (6.3), personal bonus, orders list, receipts list, `get_last_chance` with a user token, and delivery slots for the account's own address.
+- Empty on a new account, so only the empty shape is checked: orders, receipts, frequent products, spending. Not reachable without history or a booking: order details, receipt details, and a preview against a booked order.
