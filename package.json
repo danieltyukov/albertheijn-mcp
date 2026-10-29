@@ -1,6 +1,6 @@
 {
   "name": "albertheijn-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for Albert Heijn: products, bonus, basket and orders, delivery slots, shopping lists, receipts, Allerhande recipes and meal prep planning for Claude, ChatGPT, Cursor and any other MCP client.",
   "type": "module",
   "license": "MIT",

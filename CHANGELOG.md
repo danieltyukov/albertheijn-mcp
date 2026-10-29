@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-29
+
+### Fixed
+
+- `get_favorite_lists` failed with "no such item": Albert Heijn retired the REST call it used. It now lists favourite lists through GraphQL.
+
 ### Changed
 
 - `setup` writes the absolute paths of `node` and the installed `cli.js` by default. Desktop apps such as Claude Desktop do not read the shell's PATH, so the bare `albertheijn-mcp` command it wrote before was not found when Node came from nvm, fnm or Homebrew.
@@ -39,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Browser sign-in that captures the app login code, a manual fallback, automatic token renewal, and `setup` for Claude Desktop, Claude Code, Cursor, VS Code, Windsurf, Zed, Codex, Gemini CLI and Cline.
 - Unit, end-to-end (stdio) and live tests; a weekly live check of the anonymous API.
 
-[Unreleased]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/danieltyukov/albertheijn-mcp/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/danieltyukov/albertheijn-mcp/releases/tag/v0.1.0
