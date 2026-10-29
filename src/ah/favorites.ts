@@ -3,33 +3,29 @@ import { AhError } from '../errors.js';
 import { productUrl } from './format.js';
 import { productsByIds } from './products.js';
 
-interface RawList {
-  id: string;
-  description?: string;
-  itemCount?: number;
-}
-
-export async function favoriteLists(
-  ctx: AppContext,
-): Promise<{ lists: { id: string; name: string; items: number }[] }> {
-  const raw = await ctx.ah.request<RawList[]>('/mobile-services/lists/v3/lists', {
-    query: { productId: 0 },
-    auth: 'user',
-  });
-  return {
-    lists: (Array.isArray(raw) ? raw : []).map((l) => ({
-      id: l.id,
-      name: l.description ?? '',
-      items: l.itemCount ?? 0,
-    })),
-  };
-}
-
 interface RawFavoriteList {
   id: string;
   description?: string;
   totalSize?: number;
   items?: { id: string; productId: number; quantity?: number }[];
+}
+
+/** favoriteListV2 with an empty id list returns every list; the old REST listing now answers 404. */
+export async function favoriteLists(
+  ctx: AppContext,
+): Promise<{ lists: { id: string; name: string; items: number }[] }> {
+  const data = await ctx.ah.graphql<{ favoriteListV2: RawFavoriteList[] | null }>(
+    'query FavoriteLists($ids: [String!]!) { favoriteListV2(ids: $ids) { id description totalSize } }',
+    { ids: [] },
+    { auth: 'user' },
+  );
+  return {
+    lists: (data.favoriteListV2 ?? []).map((l) => ({
+      id: l.id,
+      name: l.description ?? '',
+      items: l.totalSize ?? 0,
+    })),
+  };
 }
 
 async function rawList(ctx: AppContext, listId: string): Promise<RawFavoriteList> {

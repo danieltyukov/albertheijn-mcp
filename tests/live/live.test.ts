@@ -124,8 +124,26 @@ describe.runIf(ACCOUNT)('live, signed in', () => {
     await ok('get_order');
     const receipts = await ok('list_receipts', { limit: 3 });
     if (receipts.receipts.length) await ok('get_receipt', { receiptId: receipts.receipts[0].id });
-    await ok('get_favorite_lists');
+    const favorites = await ok('get_favorite_lists');
+    expect(favorites.lists.length).toBeGreaterThan(0);
+    const favorite = await ok('get_favorite_list', { listId: favorites.lists[0].id });
+    expect(favorite.id.toLowerCase()).toBe(favorites.lists[0].id.toLowerCase());
     await ok('get_personal_bonus');
+  });
+
+  it('adds a product to a favourite list and removes it again', async () => {
+    const { lists } = await ok('get_favorite_lists');
+    const listId = lists[0].id;
+    const before = await ok('get_favorite_list', { listId });
+    if (before.items.some((i: { productId: number }) => i.productId === MILK)) return;
+    try {
+      const added = await ok('update_favorite_list', { listId, add: [{ productId: MILK, quantity: 1 }] });
+      expect(added.list.items.map((i: { productId: number }) => i.productId)).toContain(MILK);
+    } finally {
+      await call(client, 'update_favorite_list', { listId, remove: [MILK] });
+    }
+    const after = await ok('get_favorite_list', { listId });
+    expect(after.items.map((i: { productId: number }) => i.productId)).not.toContain(MILK);
   });
 
   it('changes the shopping list and puts it back, only when no delivery is booked', async () => {
