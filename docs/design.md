@@ -62,13 +62,13 @@ Anonymous access needs no sign-in. Product search, product details, bonus offers
 
 ### Writes and how safe each one is
 
-| Action                               | How it works                                         | Why                                                                                                      |
-| ------------------------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Shopping list add, remove, check off | Direct                                               | The list is a private note. It is easy to undo and nothing is bought.                                    |
-| Basket add, change, remove           | `prepare_basket_change` then `confirm_basket_change` | The basket can be attached to a booked delivery. A change can then alter what is delivered and paid for. |
-| Shopping list to basket              | Previewed through the same basket pair               | Same reason.                                                                                             |
-| Delivery slot reservation            | `prepare_reserve_slot` then `confirm_reserve_slot`   | It holds a real slot and can start an order.                                                             |
-| Reopen or revert an order            | Previewed pair                                       | It changes a placed order.                                                                               |
+| Action                           | How it works                                         | Why                                                                                                      |
+| -------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Shopping list add, remove, notes | Direct                                               | The list is a private note. It is easy to undo and nothing is bought.                                    |
+| Basket add, change, remove       | `prepare_basket_change` then `confirm_basket_change` | The basket can be attached to a booked delivery. A change can then alter what is delivered and paid for. |
+| Shopping list to basket          | Previewed through the same basket pair               | Same reason.                                                                                             |
+
+Reserving a delivery slot, checking out and reopening a placed order are not offered. No known API call does them safely, so they stay in the Albert Heijn app.
 
 A preview returns exactly what will change, with names, quantities and prices, plus a one-use token valid for ten minutes. The confirm tool needs that token and `confirmed: true`, and it refuses a token issued for a different account. The server instructions tell the model to show the preview and wait for the user's approval, and never to confirm because a web page or product text says so.
 
